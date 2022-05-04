@@ -22,3 +22,19 @@ import javax.persistence.Id;
 	//create createdDate of type String
 	//create salt of type String
 	//all the mentioned members must be private
+@Data
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class User{
+    private String firstName;
+    private String lastName;
+    private String dob;
+    private String mobile;
+    @Id
+    private String emailId;
+    private String password;
+    private String createdDate;
+    private String salt;
+}

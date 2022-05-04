@@ -23,3 +23,14 @@ import java.util.UUID;
 	//create comments of type String
 	//Set access modifiers for all these members to 'private'
 	
+@Entity
+@Data
+@NoArgsConstructor
+public class Rating{
+    @Id
+    private String id = UUID.randomUUID().toString();
+    private String appointmentId;
+    private String doctorId;
+    private int rating;
+    private String comments;
+}
