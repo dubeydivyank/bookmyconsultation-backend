@@ -3,6 +3,7 @@ package com.upgrad.bookmyconsultation.controller;
 import com.upgrad.bookmyconsultation.entity.Rating;
 import com.upgrad.bookmyconsultation.service.RatingsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,5 +23,9 @@ public class RatingsController {
 		//submit the ratings
 	
 		//return http response with status set to OK
-	
+	@PostMapping()
+	public ResponseEntity<Rating> submitRatings(@RequestBody Rating rating){
+		ratingsService.submitRatings(rating);
+		return new ResponseEntity<Rating>(HttpStatus.OK);
+	}
 }
