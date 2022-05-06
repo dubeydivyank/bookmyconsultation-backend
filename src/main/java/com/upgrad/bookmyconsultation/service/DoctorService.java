@@ -24,65 +24,82 @@ import java.util.stream.Collectors;
 @Log4j2
 @Service
 public class DoctorService {
-	@Autowired
-	private AppointmentRepository appointmentRepository;
-	@Autowired
-	private DoctorRepository doctorRepository;
-	@Autowired
-	private AddressRepository addressRepository;
+    @Autowired
+    private AppointmentRepository appointmentRepository;
+    @Autowired
+    private DoctorRepository doctorRepository;
+    @Autowired
+    private AddressRepository addressRepository;
 
-	
-	//create a method register with return type and parameter of typeDoctor
-	//declare InvalidInputException for the method
-		//validate the doctor details
-		//if address is null throw InvalidInputException
-		//set UUID for doctor using UUID.randomUUID.
-		//if speciality is null 
-			//set speciality to Speciality.GENERAL_PHYSICIAN
-		//Create an Address object, initialise it with address details from the doctor object
-		//Save the address object to the database. Store the response.
-		//Set the address in the doctor object with the response
-		//save the doctor object to the database
-		//return the doctor object
-	
-	
-	//create a method name getDoctor that returns object of type Doctor and has a String paramter called id
-		//find the doctor by id
-		//if doctor is found return the doctor
-		//else throw ResourceUnAvailableException
 
-	
+    //create a method register with return type and parameter of typeDoctor
+    //declare InvalidInputException for the method
+    //validate the doctor details
+    //if address is null throw InvalidInputException
+    //set UUID for doctor using UUID.randomUUID.
+    //if speciality is null
+    //set speciality to Speciality.GENERAL_PHYSICIAN
+    //Create an Address object, initialise it with address details from the doctor object
+    //Save the address object to the database. Store the response.
+    //Set the address in the doctor object with the response
+    //save the doctor object to the database
+    //return the doctor object
+    public Doctor register(Doctor dr) throws InvalidInputException {
+        if (dr.getAddress() == null) {
+            throw new InvalidInputException();
+        }
+        dr.setId(UUID.randomUUID().toString());
 
-	public List<Doctor> getAllDoctorsWithFilters(String speciality) {
+        if (dr.getSpeciality() == null) {
+            dr.setSpeciality(Speciality.GENERAL_PHYSICIAN);
+        }
+        Address address = dr.getAddress();
+        Address addressResponse = addressRepository.save(address);
+        dr.setAddress(addressResponse);
+        return doctorRepository.save(dr);
+    }
 
-		if (speciality != null && !speciality.isEmpty()) {
-			return doctorRepository.findBySpecialityOrderByRatingDesc(Speciality.valueOf(speciality));
-		}
-		return getActiveDoctorsSortedByRating();
-	}
+    //create a method name getDoctor that returns object of type Doctor and has a String paramter called id
+    //find the doctor by id
+    //if doctor is found return the doctor
+    //else throw ResourceUnAvailableException
+    public Doctor getDoctor(String id) {
+        Doctor doctor = doctorRepository.findById(id).orElse(null);
+        if (doctor != null) return doctor;
+        else throw new ResourceUnAvailableException();
+    }
 
-	@Cacheable(value = "doctorListByRating")
-	private List<Doctor> getActiveDoctorsSortedByRating() {
-		log.info("Fetching doctor list from the database");
-		return doctorRepository.findAllByOrderByRatingDesc()
-				.stream()
-				.limit(20)
-				.collect(Collectors.toList());
-	}
 
-	public TimeSlot getTimeSlots(String doctorId, String date) {
+    public List<Doctor> getAllDoctorsWithFilters(String speciality) {
 
-		TimeSlot timeSlot = new TimeSlot(doctorId, date);
-		timeSlot.setTimeSlot(timeSlot.getTimeSlot()
-				.stream()
-				.filter(slot -> {
-					return appointmentRepository
-							.findByDoctorIdAndTimeSlotAndAppointmentDate(timeSlot.getDoctorId(), slot, timeSlot.getAvailableDate()) == null;
+        if (speciality != null && !speciality.isEmpty()) {
+            return doctorRepository.findBySpecialityOrderByRatingDesc(Speciality.valueOf(speciality));
+        }
+        return getActiveDoctorsSortedByRating();
+    }
 
-				})
-				.collect(Collectors.toList()));
+    @Cacheable(value = "doctorListByRating")
+    private List<Doctor> getActiveDoctorsSortedByRating() {
+        log.info("Fetching doctor list from the database");
+        return doctorRepository.findAllByOrderByRatingDesc()
+                .stream()
+                .limit(20)
+                .collect(Collectors.toList());
+    }
 
-		return timeSlot;
+    public TimeSlot getTimeSlots(String doctorId, String date) {
 
-	}
+        TimeSlot timeSlot = new TimeSlot(doctorId, date);
+        timeSlot.setTimeSlot(timeSlot.getTimeSlot()
+                .stream()
+                .filter(slot -> {
+                    return appointmentRepository
+                            .findByDoctorIdAndTimeSlotAndAppointmentDate(timeSlot.getDoctorId(), slot, timeSlot.getAvailableDate()) == null;
+
+                })
+                .collect(Collectors.toList()));
+
+        return timeSlot;
+
+    }
 }
