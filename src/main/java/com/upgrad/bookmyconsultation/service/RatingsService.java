@@ -24,16 +24,22 @@ public class RatingsService {
 	@Autowired
 	private DoctorRepository doctorRepository;
 
-	
+
 	//create a method name submitRatings with void return type and parameter of type Rating
-		//set a UUID for the rating
-		//save the rating to the database
-		//get the doctor id from the rating object
-		//find that specific doctor with the using doctor id
-		//modify the average rating for that specific doctor by including the new rating
-		//save the doctor object to the database
-	
-	
+	//set a UUID for the rating
+	//save the rating to the database
+	//get the doctor id from the rating object
+	//find that specific doctor with the using doctor id
+	//modify the average rating for that specific doctor by including the new rating
+	//save the doctor object to the database
+	public void submitRatings(Rating rating) {
+		rating.setId(UUID.randomUUID().toString());
+		ratingsRepository.save(rating);
+		String doctorId = rating.getDoctorId();
+		Doctor doctor = doctorRepository.findById(doctorId).orElse(null);
+		doctor.setRating(doctor.getRating() + rating.getRating());
+		doctorRepository.save(doctor);
+	}
 
 
 }

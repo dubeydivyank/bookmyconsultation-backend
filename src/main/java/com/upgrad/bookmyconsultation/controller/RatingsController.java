@@ -23,7 +23,7 @@ public class RatingsController {
 		//submit the ratings
 	
 		//return http response with status set to OK
-	@PostMapping()
+	@PostMapping("/ratings")
 	public ResponseEntity<Rating> submitRatings(@RequestBody Rating rating){
 		ratingsService.submitRatings(rating);
 		return new ResponseEntity<Rating>(HttpStatus.OK);

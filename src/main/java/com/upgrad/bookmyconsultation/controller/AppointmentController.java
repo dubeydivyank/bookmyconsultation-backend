@@ -38,7 +38,7 @@ public class AppointmentController {
 	
 	@GetMapping("/{appointmentsId}")
 	public ResponseEntity<Appointment> getAppointment(@PathVariable String appointmentsId){
-		Appointment appointmentDetails = appointmentService.getAppointments(appointmentsId);
+		Appointment appointmentDetails = appointmentService.getAppointment(appointmentsId);
 		return new ResponseEntity<Appointment>(appointmentDetails, HttpStatus.OK);
 	}
 	//create a get method named getAppointment with return type as ResponseEntity

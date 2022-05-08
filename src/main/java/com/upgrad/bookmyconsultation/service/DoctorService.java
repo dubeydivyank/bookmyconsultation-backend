@@ -45,18 +45,22 @@ public class DoctorService {
     //save the doctor object to the database
     //return the doctor object
     public Doctor register(Doctor dr) throws InvalidInputException {
-        if (dr.getAddress() == null) {
-            throw new InvalidInputException();
-        }
+        ValidationUtils.validate(dr);
+        if(dr.getAddress() == null) throw new InvalidInputException(Arrays.asList("Address"));
+
         dr.setId(UUID.randomUUID().toString());
 
         if (dr.getSpeciality() == null) {
             dr.setSpeciality(Speciality.GENERAL_PHYSICIAN);
         }
         Address address = dr.getAddress();
-        Address addressResponse = addressRepository.save(address);
-        dr.setAddress(addressResponse);
-        return doctorRepository.save(dr);
+//        Address addressResponse = addressRepository.save(address);
+//        dr.setAddress(addressResponse);
+//        return doctorRepository.save(dr);
+        address.setId(dr.getId());
+        dr.setAddress(addressRepository.save(address));
+        doctorRepository.save(dr);
+        return dr;
     }
 
     //create a method name getDoctor that returns object of type Doctor and has a String paramter called id

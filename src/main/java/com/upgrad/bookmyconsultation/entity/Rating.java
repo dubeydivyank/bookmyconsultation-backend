@@ -31,6 +31,6 @@ public class Rating{
     private String id = UUID.randomUUID().toString();
     private String appointmentId;
     private String doctorId;
-    private int rating;
+    private Integer rating;
     private String comments;
 }
