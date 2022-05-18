@@ -28,12 +28,12 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User{
+    @Id
+    private String emailId;
     private String firstName;
     private String lastName;
     private String dob;
     private String mobile;
-    @Id
-    private String emailId;
     private String password;
     private String createdDate;
     private String salt;
